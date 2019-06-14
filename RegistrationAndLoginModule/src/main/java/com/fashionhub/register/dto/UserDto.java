@@ -1,7 +1,6 @@
 package com.fashionhub.register.dto;
 
 import java.sql.Date;
-import java.util.Set;
 
 public class UserDto {
 	private String id;
@@ -11,6 +10,7 @@ public class UserDto {
 	private Date dob;
 	private String gender;
 	private String password;
+	private String isEnabled;
 
 	public String getId() {
 		return id;
@@ -66,6 +66,14 @@ public class UserDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getIsEnabled() {
+		return isEnabled;
+	}
+
+	public void setIsEnabled(String isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 
 	@Override

@@ -32,9 +32,13 @@ public class ConfirmationToken {
 	private Date createdDate;
 
 	@OneToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
-	@JoinColumn(nullable = false, name = "ID")
+	@JoinColumn(nullable = false, name = "USER_ID")
 	private UserEntity user;
 
+	public ConfirmationToken() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	@Autowired
 	public ConfirmationToken(UserEntity user) {
 		System.out.println("ConfirmationToken.ConfirmationToken()");
@@ -73,6 +77,12 @@ public class ConfirmationToken {
 
 	public void setUser(UserEntity user) {
 		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "ConfirmationToken [id=" + id + ", confirmationToken=" + confirmationToken + ", createdDate="
+				+ createdDate + ", user=" + user + "]";
 	}
 
 }

@@ -3,11 +3,16 @@ package com.fashionhub.register.entity;
 import java.sql.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+
+import com.fashionhub.register.util.entity.ConfirmationToken;
 
 @Entity(name = "USER_DETAILS")
 public class UserEntity extends AbstractEntity {
@@ -23,12 +28,17 @@ public class UserEntity extends AbstractEntity {
 	private String gender;
 	@Column
 	private String password;
+	@Column(name = "ENABLED")
+	private boolean isEnabled;
 	@ManyToMany
 	@JoinTable(name = ("USER_ROLE"), joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<RoleEntity> roles;
 	@ManyToMany
-	@JoinTable(name = ("USER_ADDRESS"), joinColumns = @JoinColumn(name =  "ADDRESS_ID"), inverseJoinColumns = @JoinColumn(name ="USER_ID"))
+	@JoinTable(name = ("USER_ADDRESS"), joinColumns = @JoinColumn(name = "ADDRESS_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private Set<AddressEntity> address;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+	private ConfirmationToken token;
 
 	public String getName() {
 		return name;
@@ -78,6 +88,14 @@ public class UserEntity extends AbstractEntity {
 		this.password = password;
 	}
 
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+
 	public Set<RoleEntity> getRoles() {
 		return roles;
 	}
@@ -92,6 +110,17 @@ public class UserEntity extends AbstractEntity {
 
 	public void setAddress(Set<AddressEntity> address) {
 		this.address = address;
+	}
+
+	public ConfirmationToken getToken() {
+		return token;
+	}
+
+	public void setToken(ConfirmationToken token) {
+		if (this.token != null) {
+			this.token.setUser(null);
+		}
+		this.token = token;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,9 @@ import com.fashionhub.register.entity.UserEntity;
 import com.fashionhub.register.repository.AddressRepository;
 import com.fashionhub.register.repository.RoleRepository;
 import com.fashionhub.register.repository.UserRepository;
+import com.fashionhub.register.util.entity.ConfirmationToken;
+import com.fashionhub.register.util.entity.repository.ConfirmationTockenRepository;
+import com.fashionhub.register.util.service.EmailSenderService;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
@@ -36,26 +40,42 @@ public class RegistrationServiceImpl implements RegistrationService {
 	private RoleRepository roleRepository;
 	@Autowired
 	private BCryptPasswordEncoder encoder;
+	@Autowired
+	private EmailSenderService emailSenderService;
+	@Autowired
+	private ConfirmationTockenRepository tokenRepository;
 
 	@Override
 	public boolean saveUser(UserDto userDto) {
-		Set<RoleEntity> role = new HashSet<>();
-		RoleEntity defaultRole = roleRepository.findAllByName("USER");
-		role.add(defaultRole);
-		UserEntity user = new UserEntity();
-		user.setName(userDto.getName());
-		user.setPhone(userDto.getPhone());
-		user.setEmail(userDto.getEmail());
-		user.setGender(userDto.getGender());
-		user.setDob(userDto.getDob());
-		user.setPassword(encoder.encode(userDto.getPassword()));
-		user.setRoles(role);
-		UserEntity saveUser = userRepository.save(user);
-		if (saveUser == null) {
-			return false;
-		} else {
 
+		UserEntity existedUser = userRepository.findByEmail(userDto.getEmail());
+		if (existedUser == null) {
+			Set<RoleEntity> role = new HashSet<>();
+			RoleEntity defaultRole = roleRepository.findAllByName("USER");
+			role.add(defaultRole);
+			UserEntity user = new UserEntity();
+			user.setName(userDto.getName());
+			user.setPhone(userDto.getPhone());
+			user.setEmail(userDto.getEmail());
+			user.setGender(userDto.getGender());
+			user.setDob(userDto.getDob());
+			user.setPassword(encoder.encode(userDto.getPassword()));
+			user.setRoles(role);
+			userRepository.save(user);
+			ConfirmationToken confirmationToken = new ConfirmationToken(user);
+            tokenRepository.save(confirmationToken);
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(user.getEmail());
+			mailMessage.setSubject("Complete Registration!");
+			mailMessage.setFrom("chand312902@gmail.com");
+			mailMessage.setText("To confirm your account, please click here : "
+					+ "http://localhost:2020/confirm-account?token=" + confirmationToken.getConfirmationToken());
+
+			emailSenderService.sendEmail(mailMessage);
+			//UserEntity saveUser = userRepository.save(user);
 			return true;
+		} else {
+			return false;
 		}
 
 	}

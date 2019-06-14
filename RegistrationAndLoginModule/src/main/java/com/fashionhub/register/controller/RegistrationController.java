@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fashionhub.register.dto.UserDto;
 import com.fashionhub.register.service.RegistrationService;
+import com.fashionhub.register.util.service.TokenConfirmation;
 
 @Controller
 @RequestMapping("/registration")
@@ -20,7 +22,9 @@ public class RegistrationController {
 
 	@Autowired
 	private RegistrationService registrationService;
-	
+
+	@Autowired
+	private TokenConfirmation tokenConfirmation;
 
 	@GetMapping
 	public String showPage() {
@@ -28,20 +32,23 @@ public class RegistrationController {
 	}
 
 	@PostMapping
-	public String registerUser(@ModelAttribute UserDto userDto, Model model,HttpServletRequest request, HttpServletResponse response) {
-		try {
-			System.out.println("User details ::::::::::" + userDto);
-			registrationService.saveUser(userDto);
-			registrationService.autoLogin(userDto, request);
-			return "User/userDashBoard";
-		} catch (Exception e) {
-			model.addAttribute("", "fix errors");
-			e.printStackTrace();
+	public String registerUser(@ModelAttribute UserDto userDto, Model model, HttpServletRequest request,
+			HttpServletResponse response) {
+		System.out.println("User details ::::::::::" + userDto);
+		boolean result = registrationService.saveUser(userDto);
+		if (result == true) {
+			// registrationService.autoLogin(userDto, request);
+			return "Registration/message";
+		} else
 			return "/Registration/registration";
-		}
-
 	}
 
-	
-
+	@GetMapping(value = "/verifyToken")
+	public String verifyToken(@RequestParam("token") String token) {
+		boolean verifyToken = tokenConfirmation.verifyToken(token);
+		if (verifyToken == false) {
+			return "/Registration/registration";
+		} else
+			return "/User/userDashBoard";
+	}
 }

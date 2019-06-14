@@ -1,8 +1,7 @@
 package com.fashionhub.register.util.service;
 
-import com.fashionhub.register.dto.UserDto;
-import com.fashionhub.register.util.entity.ConfirmationToken;
+import org.springframework.mail.SimpleMailMessage;
 
 public interface EmailSenderService {
-	public void sendEmail(UserDto user,ConfirmationToken token);
+	public void sendEmail(SimpleMailMessage mail);
 }
