@@ -21,6 +21,7 @@ public class TokenConfirmationImpl implements TokenConfirmation {
 		if (confirmationToken != null) {
 			UserEntity user = userRepository.findByEmail(confirmationToken.getUser().getEmail());
 			user.setEnabled(true);
+			userRepository.save(user);
 			return true;
 		}
 

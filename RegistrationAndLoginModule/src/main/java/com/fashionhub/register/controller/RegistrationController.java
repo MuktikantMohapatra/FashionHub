@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,8 +44,9 @@ public class RegistrationController {
 			return "/Registration/registration";
 	}
 
-	@GetMapping(value = "/verifyToken")
+	@GetMapping(value = "/confirm-account")
 	public String verifyToken(@RequestParam("token") String token) {
+		System.out.println("RegistrationController.verifyToken()");
 		boolean verifyToken = tokenConfirmation.verifyToken(token);
 		if (verifyToken == false) {
 			return "/Registration/registration";

@@ -69,7 +69,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 			mailMessage.setSubject("Complete Registration!");
 			mailMessage.setFrom("chand312902@gmail.com");
 			mailMessage.setText("To confirm your account, please click here : "
-					+ "http://localhost:2020/confirm-account?token=" + confirmationToken.getConfirmationToken());
+					+ "http://localhost:2020/www.fashionHub.com/registration/confirm-account?token=" + confirmationToken.getConfirmationToken());
 
 			emailSenderService.sendEmail(mailMessage);
 			//UserEntity saveUser = userRepository.save(user);
@@ -79,6 +79,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 		}
 
 	}
+	
 
 	@Override
 	public boolean saveAddress(AddressDto addressDto) {

@@ -20,7 +20,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests()
-				.antMatchers("/", "/www.fashionHub.com/", "/login", "/login/**", "/index", "/registration")
+				.antMatchers("/", "/www.fashionHub.com/", "/login", "/login/**", "/index", "/registration","/registration/**")
 				.permitAll().antMatchers("/admin/dashBoard", "/admin/dashBoard/*").hasAnyAuthority("ADMIN").anyRequest()
 				.authenticated().and().csrf().disable();
 	}
